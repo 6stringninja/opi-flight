@@ -7,20 +7,25 @@ const Readline = require('@serialport/parser-readline')
 export class UartPort {
    private serialPort: SerialPort;
    private  serialOpenStatusCbs: ConcealedBehaviorSubject<boolean>;
+    onOpenStatus$: Observable<boolean>;
+
+    serialErrorCss: ConcealedSubject<Object>;
+    onErrors$: Observable<Object>;
+    serialJsonMsgs: ConcealedSubject<Object>;
+    onJsonMsg$: Observable<Object>;
+    serialMsgs: ConcealedSubject<string>;
+    onMsg$: Observable<string>;
   
 
  
-
+/*
    private  serialJsonMsgs = new ConcealedSubject<Object>();
     onJsonMsg$ = this.serialJsonMsgs.observable;
 
    private  serialMsgs = new ConcealedSubject<string>();
    onMsg$ = this.serialMsgs.observable;
-    onOpenStatus$: Observable<boolean>;
-
-    serialErrorCss: ConcealedSubject<Object>;
-    onErrors$: Observable<Object>;
- 
+  
+ */
     public get isOpen(): boolean {
         return !!this.serialPort && this.serialPort.isOpen;
     }
@@ -34,11 +39,18 @@ export class UartPort {
             this.serialPort.close();
         }
     }
-
+   
     constructor(public portName: string, public autoOpen = false, public baudRate: number = 9600) {
 
         this.serialOpenStatusCbs = new ConcealedBehaviorSubject<boolean>(false);
    this.onOpenStatus$  = this.serialOpenStatusCbs.observable
+   this.serialErrorCss = new  ConcealedSubject<Object>();
+   this.onErrors$ = this.serialErrorCss.observable;
+   
+   this.serialJsonMsgs = new ConcealedSubject<Object>();
+   this.onJsonMsg$ = this.serialJsonMsgs.observable;
+   this.serialMsgs = new ConcealedSubject<string>();
+   this.onMsg$ = this.serialMsgs.observable;
    this.createErrorHandling();
         this.createUart();
     }
